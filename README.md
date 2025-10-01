@@ -1,11 +1,31 @@
-# Cursor API 代理服务器
+# Cursor API 代理服务器 + Web聊天界面
 
-一个高性能的RESTful代理服务器，用于在局域网内转发请求到Cursor API服务。
+<div align="center">
+
+**🚀 一个高性能的RESTful代理服务器 + 现代化Web聊天界面**
+
+*用于在局域网内访问和调用Cursor API服务*
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-009688.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+[快速开始](#快速开始) • [功能特性](#功能特性) • [文档](#文档目录) • [演示](#使用方法)
+
+</div>
+
+---
+
+## 📖 项目简介
+
+一个集成了**RESTful API代理**和**Web聊天界面**的完整解决方案，支持在局域网内部署，为团队提供统一的AI对话服务。
 
 ## 功能特性
 
 ✨ **核心功能**
 - 🚀 高性能异步请求转发
+- 💬 精美的Web聊天界面（无需额外部署）
+- 🤖 多AI模型支持（GPT-4、Claude等）
 - 🔄 支持所有HTTP方法（GET, POST, PUT, DELETE, PATCH等）
 - 📝 完整的请求/响应日志记录
 - 🔐 可选的内部认证机制
@@ -13,6 +33,9 @@
 - 🌐 CORS支持
 - 📊 健康检查端点
 - 🎯 自动API文档（Swagger UI）
+- 🌓 深色/浅色主题切换
+- 💾 本地对话历史保存
+- 📱 响应式设计，支持移动端
 
 ## 快速开始
 
@@ -82,25 +105,74 @@ chmod +x start_prod.sh
 
 ## 使用方法
 
-### API端点
+### 🌐 Web聊天界面（推荐）
 
-#### 1. 根路径
+启动服务器后，直接在浏览器访问：
+
+```
+http://localhost:8000
+```
+
+或在局域网内其他设备上访问：
+
+```
+http://your-server-ip:8000
+```
+
+**Web界面功能：**
+- ✅ 选择不同的AI模型（GPT-4、Claude等）
+- ✅ 实时AI对话，支持Markdown和代码高亮
+- ✅ 保存和管理对话历史
+- ✅ 深色/浅色主题切换
+- ✅ 响应式设计，手机也能用
+
+### 📡 API端点
+
+#### 1. 根路径 / Web界面
 ```bash
 GET /
 ```
+返回Web聊天界面。
+
+#### 2. API信息
+```bash
+GET /api-info
+```
 返回服务基本信息。
 
-#### 2. 健康检查
+#### 3. 健康检查
 ```bash
 GET /health
 ```
 检查服务健康状态。
 
-#### 3. API转发
+#### 4. 获取模型列表
+```bash
+GET /models
+```
+获取所有可用的AI模型列表。
+
+#### 5. 聊天对话
+```bash
+POST /chat
+```
+发送聊天消息。
+
+**请求示例：**
+```json
+{
+  "model": "gpt-4",
+  "messages": [
+    {"role": "user", "content": "Hello"}
+  ]
+}
+```
+
+#### 6. API转发（高级）
 ```bash
 {METHOD} /api/{path}
 ```
-将请求转发到 Cursor API。
+将请求直接转发到 Cursor API。
 
 **示例：**
 
@@ -139,8 +211,43 @@ curl http://192.168.1.100:8000/health
 
 启动服务器后，访问以下URL查看自动生成的API文档：
 
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+- **Web聊天界面**: `http://localhost:8000/` （主界面）
+- **Swagger UI**: `http://localhost:8000/docs` （API文档）
+- **ReDoc**: `http://localhost:8000/redoc` （备用文档）
+
+## 模型选择说明
+
+Web界面和API都支持选择不同的AI模型：
+
+### 可用模型
+
+| 模型ID | 名称 | 提供商 | 特点 |
+|--------|------|--------|------|
+| `gpt-4` | GPT-4 | OpenAI | 最强大的推理能力 |
+| `gpt-4-turbo` | GPT-4 Turbo | OpenAI | 更快更经济 |
+| `gpt-3.5-turbo` | GPT-3.5 Turbo | OpenAI | 快速响应，适合简单任务 |
+| `claude-3-5-sonnet-20241022` | Claude 3.5 Sonnet | Anthropic | 最新Claude模型 |
+| `claude-3-opus-20240229` | Claude 3 Opus | Anthropic | Claude最强版本 |
+| `claude-3-sonnet-20240229` | Claude 3 Sonnet | Anthropic | 平衡性能 |
+
+### 如何选择模型
+
+**在Web界面中：**
+- 使用左侧边栏的"模型选择"下拉菜单
+- 选择后立即生效，影响后续所有对话
+
+**在API调用中：**
+```json
+{
+  "model": "claude-3-5-sonnet-20241022",  // 指定模型
+  "messages": [...]
+}
+```
+
+**注意事项：**
+- 不同模型的响应速度和质量可能不同
+- 某些模型可能需要特定的API权限
+- 模型可用性取决于您的Cursor API配置
 
 ## 测试
 
@@ -283,12 +390,74 @@ tail -f logs/proxy.log
 
 ## 技术栈
 
+### 后端
 - **FastAPI**: 现代化高性能Web框架
 - **Uvicorn**: ASGI服务器
 - **httpx**: 异步HTTP客户端
 - **Pydantic**: 数据验证和配置管理
 - **Loguru**: 强大的日志库
 - **SlowAPI**: 速率限制
+
+### 前端
+- **纯JavaScript**: 无构建依赖，轻量高效
+- **Marked.js**: Markdown渲染
+- **Highlight.js**: 代码语法高亮
+- **LocalStorage**: 本地数据持久化
+- **响应式CSS**: 自适应各种设备
+
+## 文档目录
+
+本项目提供完整的文档支持：
+
+| 文档 | 说明 |
+|------|------|
+| [README.md](README.md) | 项目主文档（本文件） |
+| [QUICKSTART.md](QUICKSTART.md) | 5分钟快速开始指南 |
+| [FEATURES.md](FEATURES.md) | 详细功能特性说明 |
+| [DEMO_GUIDE.md](DEMO_GUIDE.md) | 19个演示场景 |
+| [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | 项目架构和文件说明 |
+| [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) | 实施总结报告 |
+| [VERSION.md](VERSION.md) | 版本信息 |
+| [DELIVERY_CHECKLIST.md](DELIVERY_CHECKLIST.md) | 交付清单 |
+
+## 常见问题
+
+### Q: 如何指定使用的AI模型？
+**A:** 有两种方式：
+1. **Web界面**：左侧边栏的"模型选择"下拉菜单
+2. **API调用**：在请求body中指定 `"model": "gpt-4"` 或其他支持的模型ID
+
+支持的模型：GPT-4, GPT-4 Turbo, GPT-3.5 Turbo, Claude 3.5 Sonnet, Claude 3 Opus, Claude 3 Sonnet
+
+### Q: 局域网内其他设备如何访问？
+**A:** 
+1. 查看服务器IP地址：`ifconfig` (Linux/Mac) 或 `ipconfig` (Windows)
+2. 其他设备浏览器访问：`http://服务器IP:8000`
+3. 确保防火墙允许8000端口访问
+
+### Q: 如何保护API安全？
+**A:** 
+1. 在 `.env` 中设置 `ENABLE_AUTH=true`
+2. 配置 `AUTH_TOKEN=your-secret-token`
+3. 建议生产环境使用Nginx配置HTTPS
+
+### Q: 对话历史存储在哪里？
+**A:** 对话历史存储在浏览器的LocalStorage中，每个设备独立保存，最多保存50条记录。
+
+### Q: 是否支持流式响应？
+**A:** 当前版本（v1.0.0）暂不支持流式响应，计划在v1.1.0中添加。
+
+## 更新日志
+
+### v1.0.0 (2025-10-01)
+- 🎉 初始版本发布
+- ✅ RESTful API代理服务器
+- ✅ Web聊天界面
+- ✅ 6种AI模型支持
+- ✅ 局域网访问
+- ✅ 完整文档
+
+详见 [VERSION.md](VERSION.md)
 
 ## 许可证
 
@@ -298,6 +467,24 @@ MIT License
 
 欢迎提交Issue和Pull Request！
 
+如果这个项目对您有帮助，请给个⭐️Star支持一下！
+
+## 致谢
+
+- [FastAPI](https://fastapi.tiangolo.com/) - 现代化Web框架
+- [Marked.js](https://marked.js.org/) - Markdown渲染
+- [Highlight.js](https://highlightjs.org/) - 代码高亮
+
 ## 联系方式
 
 如有问题，请通过Issue联系。
+
+---
+
+<div align="center">
+
+**Made with ❤️ for AI Enthusiasts**
+
+⭐️ 如果觉得有用，请给个Star！⭐️
+
+</div>
