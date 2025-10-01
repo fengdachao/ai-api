@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  cursor-proxy:
+    build: .
+    container_name: cursor-api-proxy
+    ports:
+      - "8000:8000"
+    environment:
+      - CURSOR_API_URL=${CURSOR_API_URL:-https://api2.cursor.sh}
+      - CURSOR_API_KEY=${CURSOR_API_KEY}
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+      - ENABLE_AUTH=${ENABLE_AUTH:-false}
+      - AUTH_TOKEN=${AUTH_TOKEN}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RATE_LIMIT=${RATE_LIMIT:-60}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    driver: bridge
